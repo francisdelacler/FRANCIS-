@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consultation des Résultats de Paris</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiUmVzdWx0YWRvcyBQYXJpcyIsInNob3J0X25hbWUiOiJQYXJpcyIsInN0YXJ0X3VybCI6Ii8iLCJkaXNwbGF5Ijoic3RhbmRhbG9uZSIsImJhY2tncm91bmRfY29sb3IiOiIjMTgxODE4IiwidGhlbWVfY29sb3IiOiIjNUQ1Q0RFIiwiaWNvbnMiOlt7InNyYyI6ImRhdGE6aW1hZ2Uvc3ZnK3htbDtiYXNlNjQsUEhOMlp5QjNhV1IwYUQwaU1qUWlJR2hsYVdkb2REMGlNalFpSUhabGNuTnBiMjVmTVMweElpNHhJaUI0Yld4dWN6MGlhSFIwY0RvdkwzZDNkeTUzTXk1dmNtY3ZNakF3TUM5emRtY2lQZ29nSUR4eVpXTjBJSGRwWkhSb1BTSTBNeUlnYUdWcFoyaDBQU0kwTXlJZ1pubHNiRDBpSTJRMFpEUm1PQ0l2UGdvZ0lEeDBaWGgwSUhnOUlqRWlJSGs5SWpnaUlHWnBiR3c5SWlOemJtOTNJaUJtYjI1MExYTnBlbVU5SWpFMklpQjBaWGgwTFdGdVkyaHZjajBpYldsa1pHeGxJaUIzWldsbmFIUTlJbUp2YkdRaVBqZzRQQzkwWlhoMFBnb2dJRHgwWlhoMElIZzlJakZpSWlCNVBTSTRZaUlnWm1sc2JEMGlJek5qTTJNek15SWdabTl1ZEMxemFYcGxQU0k0Y0hnaVBrbDBXUzQ4TDNSbGVIUStDaUFnUEhSbGVIUWdlRDBpTVNJZ2VUMGlNVFppSWlCbWFXeHNQU0lqTXpOak0yTXpNeUlnWm05dWRDMXphWHBsUFNJNGNIZ2lQbE5qYjNKbE9pNDhMM1JsZUhRK0NpNGdQSFJsZUhRZ2VEMGlNU0lnZVQwaU1qZGlJaUJtYVd4c1BTSWpNek5qTTJNek15SWdabTl1ZEMxemFYcGxQU0kyY0hnaVBtVndkV2w2WlNCc2FXNWlaSEU4TDNSbGVIUStDaUFnUEhSbGVIUWdlRDBpTVNJZ2VUMGlOVGRpSWlCbWFXeHNQU0lqTXpOak0yTXpNeUlnWm05dWRDMXphWHBsUFNJMmNIZ2lQaUIzSWkxc1kyaGxSUzR2UTJobFJBPDNVV2RQUWp4T1FqZFBRajFPUWo1UFFqSk9RajFPUWpoZlEwcDBaV0ZrV0ZBZzNKZlQ5NnpOQ1ZpVk5JWEQ5Q1lHZytaVGdPUWo1UVFqcE9RajFPUWkxT1FqSk9Rai9QJz10cFQ2TlFqOUtRVVo4VzBOQ05VNVVUVjJOUWg5T1FqUU9RaiJldz09Iiwic2l6ZXMiOiI0OHg0OCIsInR5cGUiOiJpbWFnZS9zdmcreG1sIn1dfQ=="
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .slide-up {
+            animation: slideUp 0.2s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#5D5CDE',
+                        'primary-dark': '#4B4AC7'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-white dark:bg-gray-900 min-h-screen transition-colors duration-300">
+    <div id="root" class="min-h-screen"></div>
+    <script src="https://unpkg.com/react/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // Gestion du thème sombre
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            if (event.matches) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        });
+
+        function ResultadosParis() {
+            const [match, setMatch] = useState("");
+            const [result, setResult] = useState("");
+            const [historique, setHistorique] = useState([]);
+            const [stats, setStats] = useState({ gagnes: 0, perdus: 0, total: 0 });
+
+            useEffect(() => {
+                const gagnes = historique.filter(item => 
+                    item.result.toLowerCase().includes('gagné') || 
+                    item.result.toLowerCase().includes('gagne') ||
+                    item.result.toLowerCase().includes('victoire') ||
+                    item.result.toLowerCase().includes('win')
+                ).length;
+                const perdus = historique.filter(item => 
+                    item.result.toLowerCase().includes('perdu') || 
+                    item.result.toLowerCase().includes('défaite') ||
+                    item.result.toLowerCase().includes('defaite') ||
+                    item.result.toLowerCase().includes('loss')
+                ).length;
+                
+                setStats({ gagnes, perdus, total: historique.length });
+            }, [historique]);
+
+            const ajouterResultat = () => {
+                if (match.trim() && result.trim()) {
+                    const nouveauResultat = {
+                        id: Date.now(),
+                        match: match.trim(),
+                        result: result.trim(),
+                        date: new Date().toLocaleDateString('fr-FR')
+                    };
+                    setHistorique([nouveauResultat, ...historique]);
+                    setMatch("");
+                    setResult("");
+                }
+            };
+
+            const supprimerResultat = (id) => {
+                setHistorique(historique.filter(item => item.id !== id));
+            };
+
+            const viderHistorique = () => {
+                setHistorique([]);
+            };
+
+            const getResultatColor = (result) => {
+                const lowerResult = result.toLowerCase();
+                if (lowerResult.includes('gagné') || lowerResult.includes('gagne') || 
+                    lowerResult.includes('victoire') || lowerResult.includes('win')) {
+                    return 'text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20';
+                } else if (lowerResult.includes('perdu') || lowerResult.includes('défaite') || 
+                          lowerResult.includes('defaite') || lowerResult.includes('loss')) {
+                    return 'text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20';
+                }
+                return 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20';
+            };
+
+            const handleKeyPress = (e) => {
+                if (e.key === 'Enter') {
+                    ajouterResultat();
+                }
+            };
+
+            return (
+                <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+                    {/* Header */}
+                    <div className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+                        <div className="max-w-md mx-auto px-4 py-6">
+                            <div className="text-center">
+                                <div className="text-4xl mb-2">📊</div>
+                                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Paris Tracker</h1>
+                                <p className="text-gray-600 dark:text-gray-300 text-sm mt-1">Suivez vos résultats de paris</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="max-w-md mx-auto px-4 py-6 space-y-6">
+                        {/* Statistiques */}
+                        {stats.total > 0 && (
+                            <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-700 fade-in">
+                                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">📈 Statistiques</h3>
+                                <div className="grid grid-cols-3 gap-4">
+                                    <div className="text-center">
+                                        <div className="text-2xl font-bold text-green-600 dark:text-green-400">{stats.gagnes}</div>
+                                        <div className="text-xs text-gray-600 dark:text-gray-400">Gagnés</div>
+                                    </div>
+                                    <div className="text-center">
+                                        <div className="text-2xl font-bold text-red-600 dark:text-red-400">{stats.perdus}</div>
+                                        <div className="text-xs text-gray-600 dark:text-gray-400">Perdus</div>
+                                    </div>
+                                    <div className="text-center">
+                                        <div className="text-2xl font-bold text-primary">{stats.total}</div>
+                                        <div className="text-xs text-gray-600 dark:text-gray-400">Total</div>
+                                    </div>
+                                </div>
+                                {stats.total > 0 && (
+                                    <div className="mt-3 text-center">
+                                        <div className="text-sm text-gray-600 dark:text-gray-400">
+                                            Taux de réussite: <span className="font-semibold text-primary">
+                                                {Math.round((stats.gagnes / stats.total) * 100)}%
+                                            </span>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {/* Formulaire d'ajout */}
+                        <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-700">
+                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">➕ Nouveau Paris</h3>
+                            <div className="space-y-3">
+                                <input
+                                    className="w-full px-4 py-3 text-base border border-gray-300 dark:border-gray-600 rounded-lg 
+                                             focus:ring-2 focus:ring-primary focus:border-transparent
+                                             bg-white dark:bg-gray-700 text-gray-900 dark:text-white
+                                             placeholder-gray-500 dark:placeholder-gray-400
+                                             transition-all duration-200"
+                                    placeholder="Match ou événement"
+                                    value={match}
+                                    onChange={(e) => setMatch(e.target.value)}
+                                    onKeyPress={handleKeyPress}
+                                />
+                                <input
+                                    className="w-full px-4 py-3 text-base border border-gray-300 dark:border-gray-600 rounded-lg 
+                                             focus:ring-2 focus:ring-primary focus:border-transparent
+                                             bg-white dark:bg-gray-700 text-gray-900 dark:text-white
+                                             placeholder-gray-500 dark:placeholder-gray-400
+                                             transition-all duration-200"
+                                    placeholder="Résultat (Gagné, Perdu, etc.)"
+                                    value={result}
+                                    onChange={(e) => setResult(e.target.value)}
+                                    onKeyPress={handleKeyPress}
+                                />
+                                <button 
+                                    onClick={ajouterResultat} 
+                                    disabled={!match.trim() || !result.trim()}
+                                    className="w-full bg-primary hover:bg-primary-dark disabled:bg-gray-300 dark:disabled:bg-gray-600 
+                                             text-white font-medium py-3 px-4 rounded-lg transition-all duration-200 text-base
+                                             disabled:cursor-not-allowed transform active:scale-95"
+                                >
+                                    📝 Ajouter le résultat
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Liste des résultats */}
+                        {historique.length > 0 ? (
+                            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                                <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">📋 Historique</h3>
+                                    <button 
+                                        onClick={viderHistorique}
+                                        className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 text-sm font-medium transition-colors"
+                                    >
+                                        🗑️ Vider
+                                    </button>
+                                </div>
+                                <div className="max-h-96 overflow-y-auto">
+                                    {historique.map((item, index) => (
+                                        <div key={item.id} className={`p-4 border-b border-gray-100 dark:border-gray-700 last:border-b-0 slide-up ${getResultatColor(item.result)}`}
+                                             style={{animationDelay: `${index * 50}ms`}}>
+                                            <div className="flex justify-between items-start">
+                                                <div className="flex-1 min-w-0">
+                                                    <div className="font-semibold text-gray-900 dark:text-white text-sm truncate">
+                                                        {item.match}
+                                                    </div>
+                                                    <div className="text-sm font-medium mt-1">
+                                                        {item.result}
+                                                    </div>
+                                                    <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                                                        {item.date}
+                                                    </div>
+                                                </div>
+                                                <button 
+                                                    onClick={() => supprimerResultat(item.id)}
+                                                    className="ml-3 text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors p-1"
+                                                >
+                                                    ❌
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-sm border border-gray-200 dark:border-gray-700 text-center">
+                                <div className="text-6xl mb-4">🎯</div>
+                                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">Aucun résultat</h3>
+                                <p className="text-gray-600 dark:text-gray-400 text-sm">
+                                    Commencez par ajouter votre premier paris ci-dessus
+                                </p>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<ResultadosParis />, document.getElementById('root'));
+    </script>
+</body>
+</html>
+
